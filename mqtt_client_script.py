@@ -25,8 +25,6 @@ topics = {
     "temperature": "UoP/CO/326/E18/19/DHT11/temperature",
     "humidity": "UoP/CO/326/E18/19/DHT11/humidity",
     "air_quality": "UoP/CO/326/E18/19/MQ135/AirQuality",
-    "LED": "UoP/CO/326/E18/19/LED",
-    "buzzer": "UoP/CO/326/E18/19/Buzzer"
 }
 
 sensor_data = {
