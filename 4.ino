@@ -30,6 +30,7 @@ const char *topic_LEDRED = "UoP/CO/326/E18/19/LEDRED";
 const char *topic_LED = "UoP/CO/326/E18/19/LED";
 const char *topic_buzzer= "UoP/CO/326/E18/19/Buzzer";
 const char *topic = "UoP/CO/326/E18/19/";
+const char *topic_temp_adjustunit = "UoP/CO/326/E18/19/DHT11/temperature/adjustUnit";
 const int mqtt_port = 1883;
 
 WiFiClient espClient;
@@ -55,7 +56,6 @@ void setup() {
  
  //connecting to a mqtt broker
  client.setServer(mqtt_broker, mqtt_port);
- client.setCallback(BuzzerControlByMessage); 
  client.setCallback(LEDControlByMessage); 
  
  while (!client.connected()) {
@@ -132,6 +132,7 @@ void LEDControlByMessage(char *topic, byte *payload, unsigned int length) {
  Serial.print("Message:");
  String messageInfo_LED;
  String messageInfo_buzzer;
+ String messageInfo_Temp_adjustunit;
 
  if (String(topic)==topic_LED){
   for (int i = 0; i < length; i++) {
@@ -175,10 +176,23 @@ void LEDControlByMessage(char *topic, byte *payload, unsigned int length) {
      delay(100);        
   } 
   buzzercontrol = 0;
+  delay(1000);
+   
  }
 
- delay(1000);
-   
+ if (String(topic)==topic_temp_adjustunit){
+  for (int i = 0; i < length; i++) {
+  Serial.print((char) payload[i]);
+  messageInfo_Temp_adjustunit += (char)payload[i];
+ }
+ float t = dht.readTemperature();
+ if (messageInfo_Temp_adjustunit == "Farenheit"){
+     float TempF = (t*1.8)+32;  
+     char payloadt[10];
+     dtostrf(TempF, 4, 2, payloadt);
+     client.publish(topic_temp,payloadt);     
+  }
+ }
 }
 
 void loop() {
